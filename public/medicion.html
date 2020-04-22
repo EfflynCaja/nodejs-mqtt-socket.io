@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head> 
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SCADA/PERU/IOT</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/custom.css">
+
+    <!-- Morris.js -->
+    <link href="css/morris.css" rel="stylesheet" >
+    
+  </head>
+
+  <body>
+    <header>
+      <div class="menu_bar">
+        <a href="#" class="bt-menu"><span class="icon-menu"></span>Menu</a>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="index.html"><span class="icon-home3"></span>Inicio</a></li>
+          <li class="submenu1">
+            <a href="#"><span class="icon-drive"></span>Medición</a>
+            <ul class="children">
+              <li class="bt-medicion"><a href="medicion.html">Dashboard<span class="icon-flickr2"></span></a></li>
+            </ul>
+          </li>
+          <li class="submenu2">
+            <a href="#"><span class="icon-earth"></span>Históricos</a>     
+            <ul class="children">
+              <li class="bt-historico"><a href="historico.html">Consultas<span class="icon-flickr2"></span></a></li>
+              <li class="bt-grafica"><a href="grafica.html">Gráficas<span class="icon-flickr2"></span></a></li>
+            </ul>
+          </li>
+          <li class="login"><a href="#"><span class="icon-user"></span>Login</a></li>
+        </ul>
+      </nav>
+    </header>
+
+
+
+    <div class="container">
+      <h1>SCADA/Perú</h1>
+    
+      <div class="row">
+        <div class="col-md-4">
+        <h4><img src="images/temperature_icon.png" />Temperatura Chart</h4>
+        <div id="temperature_chart" style="height: 250px;"></div>
+        </div>
+
+        <div class="col-md-4">
+        <h4><img src="images/temperature_icon.png" />Temperatura Donut</h4>
+        <div id="temperature_donut" style="height: 250px;"></div>
+        </div>
+
+        <div class="col-md-4">
+        <h4><img src="images/temperature_icon.png" />Temperatura Bar</h4>
+        <div id="temperature_bar" style="height: 250px;"></div>
+        </div>
+
+        <div class="col-md-4">
+        <h4><img src="images/humidity_icon.png" />Nivel Chart</h4>
+        <div id="level_chart" style="height: 250px;"></div>
+        </div>
+
+        <div class="col-md-4">
+        <h4><img src="images/humidity_icon.png" />Nivel Donut</h4>
+        <div id="level_donut" style="height: 250px;"></div>
+        </div>
+
+        <div class="col-md-4">
+        <h4><img src="images/humidity_icon.png" />Nivel Bar</h4>
+        <div id="level_bar" style="height: 250px;"></div>
+        </div>
+        
+        <div class="col-md-4">
+        <h4><img src="images/presion_icon.png" />Pressure Chart</h4>
+        <div id="pressure_chart" style="height: 250px;"></div>
+        </div>
+
+        <div class="col-md-4">
+        <h4><img src="images/presion_icon.png" />Pressure Donut</h4>
+        <div id="pressure_donut" style="height: 250px;"></div>
+        </div>
+
+        <div class="col-md-4">
+        <h4><img src="images/presion_icon.png" />Pressure Bar</h4>
+        <div id="pressure_bar" style="height: 250px;"></div>
+        </div>
+
+        <div class="col-md-4">
+        <h4><img src="images/humidity_icon.png" />Flow Chart</h4>
+        <div id="flow_chart" style="height: 250px;"></div>
+        </div>
+
+        <div class="col-md-4">
+        <h4><img src="images/humidity_icon.png" />Flow Donut</h4>
+        <div id="flow_donut" style="height: 250px;"></div>
+        </div>
+
+        <div class="col-md-4">
+        <h4><img src="images/humidity_icon.png" />Flow Bar</h4>
+        <div id="flow_bar" style="height: 250px;"></div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- Morris Charts JavaScript -->
+    <script src="js/raphael-min.js"></script>
+    <script src="js/morris.min.js"></script>
+
+    <!-- Socket IO -->
+    <script src="socket.io/socket.io.js"></script>
+
+    <script>
+      var temperature_Index = 0;
+      var temperature_ChartData = [{timestamp:0, value:0}];
+      var temperature_Chart = new Morris.Line({
+        element: 'temperature_chart',
+        data: temperature_ChartData,
+        xkey: 'timestamp',
+        ykeys: ['value'],
+        labels: ['Temperatura'],
+        hideHover: true,
+        lineColors: [ '#CDDC39' ]
+      });
+
+      var temperature_DonutData = [{label: "Temperatura", value: 0}];
+      var temperature_Donut = new Morris.Donut({
+        element: 'temperature_donut',
+        data: temperature_DonutData,
+        colors: [
+            '#FF7043',
+            '#FFFFFF'
+        ]
+      });
+
+      var temperature_BarData = [{label: 'Temperature', value: 0}];
+      var temperature_Bar = new Morris.Bar({
+        element: 'temperature_bar',
+        data: temperature_BarData,
+        xkey: 'label',
+        ykeys: ['value'],
+        labels: ['Temperatura'],
+        hideHover: false,
+        barColors: [ '#2196F3' ],
+        ymin: 0,
+        ymax: 50
+      });
+
+      var level_Index = 0;
+      var level_ChartData = [{timestamp:0, value:0}];
+      var level_Chart = new Morris.Line({
+        element: 'level_chart',
+        data: level_ChartData,
+        xkey: 'timestamp',
+        ykeys: ['value'],
+        labels: ['Nivel (%)'],
+        hideHover: true,
+        lineColors: [ '#FFC107' ]
+      });
+
+      var level_DonutData = [{label: "Nivel", value: 0}];
+      var level_Donut = new Morris.Donut({
+        element: 'level_donut',
+        data: level_DonutData,
+        colors: [
+            '#8BC34A',
+            '#FFFFFF'
+        ]
+      });
+
+      var level_BarData = [{label: 'Nivel', value: 0}];
+      var level_Bar = new Morris.Bar({
+        element: 'level_bar',
+        data: level_BarData,
+        xkey: 'label',
+        ykeys: ['value'],
+        labels: ['Nivel'],
+        hideHover: false,
+        barColors: [ '#CDDC39' ],
+        ymin: 0,
+        ymax: 100
+      });
+      
+      var pressure_Index = 0;
+      var pressure_ChartData = [{timestamp:0, value:0}];
+      var pressure_Chart = new Morris.Line({
+        element: 'pressure_chart',
+        data: pressure_ChartData,
+        xkey: 'timestamp',
+        ykeys: ['value'],
+        labels: ['Presión (Psi)'],
+        hideHover: true,
+        lineColors: [ '#FFC107' ]
+      });
+
+      var pressure_DonutData = [{label: "Presión", value: 0}];
+      var pressure_Donut = new Morris.Donut({
+        element: 'pressure_donut',
+        data: pressure_DonutData,
+        colors: [
+            '#FF7043',
+            '#FFFFFF'
+        ]
+      });
+
+      var pressure_BarData = [{label: 'Presión', value: 0}];
+      var pressure_Bar = new Morris.Bar({
+        element: 'pressure_bar',
+        data: pressure_BarData,
+        xkey: 'label',
+        ykeys: ['value'],
+        labels: ['Presión'],
+        hideHover: false,
+        barColors: [ '#2196F3' ],
+        ymin: 0,
+        ymax: 100
+      });
+
+      var flow_Index = 0;
+      var flow_ChartData = [{timestamp:0, value:0}];
+      var flow_Chart = new Morris.Line({
+        element: 'flow_chart',
+        data: flow_ChartData,
+        xkey: 'timestamp',
+        ykeys: ['value'],
+        labels: ['Flujo (kg/m3)'],
+        hideHover: true,
+        lineColors: [ '#FFC107' ]
+      });
+
+      var flow_DonutData = [{label: "Flujo", value: 0}];
+      var flow_Donut = new Morris.Donut({
+        element: 'flow_donut',
+        data: flow_DonutData,
+        colors: [
+            '#8BC34A',
+            '#FFFFFF'
+        ]
+      });
+
+      var flow_BarData = [{label: 'Flujo', value: 0}];
+      var flow_Bar = new Morris.Bar({
+        element: 'flow_bar',
+        data: flow_BarData,
+        xkey: 'label',
+        ykeys: ['value'],
+        labels: ['Flujo'],
+        hideHover: false,
+        barColors: [ '#3F51B5' ],
+        ymin: 0,
+        ymax: 100
+      });
+
+      //var socket = io.connect('http://localhost:3000');
+      var socket = io();
+      const MAX = 10;
+
+      socket.on('mqtt_temperature', function(data) {
+        // Create the current point
+        var graphPoint = {};
+        graphPoint.timestamp = data.time;
+        graphPoint.value = data.raw;
+        
+        // Update the set of points
+        temperature_ChartData[temperature_Index++ % MAX] = graphPoint;
+        temperature_Chart.setData(temperature_ChartData);
+
+        // Create the point for the temperature segment
+        var temperature_Segment = {};
+        temperature_Segment.label = "Temperatura °C";
+        temperature_Segment.value = data.raw;
+
+        var whiteSegment = {};
+        whiteSegment.label = "";
+        whiteSegment.value = 50 - data.raw;
+
+        // Update the segments
+        temperature_DonutData[0] = temperature_Segment;
+        temperature_DonutData[1] = whiteSegment;
+        temperature_Donut.setData(temperature_DonutData);
+
+        // Select the temperature donut segment
+        temperature_Donut.select(0);
+
+        // Update the bar chart
+        temperature_BarData[0] = temperature_Segment;
+        temperature_Bar.setData(temperature_BarData);
+      });
+
+      socket.on('mqtt_level', function(data) {
+        // Create the current point
+        var graphPoint = {};
+        graphPoint.timestamp = data.time;
+        graphPoint.value = data.raw;
+        
+        // Update the set of points
+        level_ChartData[level_Index++ % MAX] = graphPoint;
+        level_Chart.setData(level_ChartData);
+
+        // Create the point for the ldr segment
+        var level_Segment = {};
+        level_Segment.label = "Nivel %";
+        level_Segment.value = data.raw;
+
+        var whiteSegment = {};
+        whiteSegment.label = "";
+        whiteSegment.value = 100 - data.raw;
+
+        // Update the segments
+        level_DonutData[0] = level_Segment;
+        level_DonutData[1] = whiteSegment;
+        level_Donut.setData(level_DonutData);
+
+        // Select the ldr donut segment
+        level_Donut.select(0);
+
+        // Update the bar chart
+        level_BarData[0] = level_Segment;
+        level_Bar.setData(level_BarData);   
+      });
+      
+      socket.on('mqtt_pressure', function(data) {
+        // Create the current point
+        var graphPoint = {};
+        graphPoint.timestamp = data.time;
+        graphPoint.value = data.raw;
+        
+        // Update the set of points
+        pressure_ChartData[pressure_Index++ % MAX] = graphPoint;
+        pressure_Chart.setData(pressure_ChartData);
+
+        // Create the point for the ldr segment
+        var pressure_Segment = {};
+        pressure_Segment.label = "Presión Psi";
+        pressure_Segment.value = data.raw;
+
+        var whiteSegment = {};
+        whiteSegment.label = "";
+        whiteSegment.value = 100 - data.raw;
+
+        // Update the segments
+        pressure_DonutData[0] = pressure_Segment;
+        pressure_DonutData[1] = whiteSegment;
+        pressure_Donut.setData(pressure_DonutData);
+
+        // Select the ldr donut segment
+        pressure_Donut.select(0);
+
+        // Update the bar chart
+        pressure_BarData[0] = pressure_Segment;
+        pressure_Bar.setData(pressure_BarData);   
+      });
+
+      socket.on('mqtt_flow', function(data) {
+        // Create the current point
+        var graphPoint = {};
+        graphPoint.timestamp = data.time;
+        graphPoint.value = data.raw;
+        
+        // Update the set of points
+        flow_ChartData[flow_Index++ % MAX] = graphPoint;
+        flow_Chart.setData(flow_ChartData);
+
+        // Create the point for the ldr segment
+        var flow_Segment = {};
+        flow_Segment.label = "Flujo kg/m3";
+        flow_Segment.value = data.raw;
+
+        var whiteSegment = {};
+        whiteSegment.label = "";
+        whiteSegment.value = 100 - data.raw;
+
+        // Update the segments
+        flow_DonutData[0] = flow_Segment;
+        flow_DonutData[1] = whiteSegment;
+        flow_Donut.setData(flow_DonutData);
+
+        // Select the ldr donut segment
+        flow_Donut.select(0);
+
+        // Update the bar chart
+        flow_BarData[0] = flow_Segment;
+        flow_Bar.setData(flow_BarData);   
+      });
+
+
+
+
+    </script>
+
+    <script src="js/menu.js"></script>
+
+  </body>
+</html>

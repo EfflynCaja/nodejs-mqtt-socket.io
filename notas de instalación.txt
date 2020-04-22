@@ -1,0 +1,52 @@
+*Aplicación MQTT sobre Socket.IO para demostraciones usando el 
+*Broker CloudMQTT (ver app.js)
+
+1. CREAR EL PACKAGE.JSON
+
+	1.1 Abrir el command de windows y digitar
+	1.2 cd <ruta de la carpeta>	(enter)
+	1.3 npm init 			(enter)
+	
+	Debe quedar asi:
+
+	{
+		"name": "scada-peru.mybluemix.net",
+		"version": "1.0.0",
+  		"description": "",
+  		"main": "app.js",
+  		"scripts": {
+    		"test": "echo \"Error: no test specified\" && exit 1",
+    		"start": "node app.js"
+  	},
+  		"keywords": [],
+  		"author": "",
+  		"license": "ISC",
+  		"dependencies": {
+    			"body-parser": "^1.19.0",
+    			"express": "^4.17.1",
+    			"mqtt": "^3.0.0",
+    			"path": "^0.12.7",
+    			"socket.io": "^2.3.0"
+  		}
+	}
+
+2. CREAR LOS MODULOS
+	
+	2.1 Abrir el command de windows y digitar
+	2.2 cd <ruta de la carpeta>	(enter)
+	2.3 npm install express 	(enter)
+	2.4 npm install mqtt		(enter)
+	2.5 npm install path		(enter)
+	2.6 npm install body-parser	(enter)
+
+	Esto creara una carpeta "node_modules" con todas las
+	librerias necesarias para correr el app.js
+
+
+3. EJECUTAR LA APP
+
+	3.1 Abrir el command de windows y digitar
+	3.2 cd <ruta de la carpeta>	(enter)
+	3.3 node app.js 		(enter)
+	3.4 Abrir el explorador de internet y usar la URL
+	    http://localhost:3000 (listo :P)
