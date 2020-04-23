@@ -50,3 +50,15 @@
 	3.3 node app.js 		(enter)
 	3.4 Abrir el explorador de internet y usar la URL
 	    http://localhost:3000 (listo :P)
+
+*Subir datos a Github
+
+1. git init
+
+2. git add . (nuevo) / git add -u
+
+3. git commit -m "first commit"
+
+4. git remote add origin https://github.com/EfflynCaja/nodejs-mqtt-socket.io.git
+
+5. git push -u origin master

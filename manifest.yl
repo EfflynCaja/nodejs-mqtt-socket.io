@@ -1,4 +1,0 @@
-applications:
-- name: SCADA-Peru
-  random-route: true
-  memory: 256M
