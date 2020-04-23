@@ -13,7 +13,7 @@ const MQTT_PRESSURE = 'demo/sensores/pressure';
 
 //configuraciones
 app.set('port', process.env.PORT || 3000);
-app.use(express.static(__dirname + '/public')) //carga index.html
+app.use(express.static(__dirname + '/public')); //carga index.html
 app.use(bodyParser.json());
 
 //routes
